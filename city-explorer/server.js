@@ -11,6 +11,6 @@ app.use(cors());
 const PORT = process.env.PORT;
 
 app.get('/location', (request, response) => {
-  const locationData = searchToLatLong(request.query.data)
+  const locationData = searchToLatLong(request.query.data);
   response.send(locationData);
 })
