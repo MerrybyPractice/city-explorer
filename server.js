@@ -17,6 +17,6 @@ app.get('/location', (request, response) => {
 
 app.get('/testing', (request, response) => {
   console.log('Im here.');
-  let test = {test: `this works on PORT${PORT}`
+  let test = {test: `this works on PORT${PORT}`}
 });
 app.listen(PORT, () => console.log('Listening on PORT ${PORT}'));
