@@ -1,0 +1,31 @@
+{
+  "name": "city-explorer",
+  "version": "1.0.0",
+  "description": "City Explorer",
+  "main": "server.js",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^7.0.0",
+    "express": "^4.16.4"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MerrybyPractice/city-explorer.git"
+  },
+  "keywords": [
+    "cities",
+    "exploring",
+    "APIs"
+  ],
+  "author": "Merry Cimakasky, Jessica Zuchowski",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MerrybyPractice/city-explorer/issues"
+  },
+  "homepage": "https://github.com/MerrybyPractice/city-explorer#readme"
+}
