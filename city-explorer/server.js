@@ -14,3 +14,9 @@ app.get('/location', (request, response) => {
   const locationData = searchToLatLong(request.query.data);
   response.send(locationData);
 })
+
+app.get('/testing', (request, response) => {
+  console.log('Im here.');
+  let test = {test: `this works on PORT${PORT}`
+});
+app.listen(PORT, () => console.log('Listening on PORT ${PORT}'));
