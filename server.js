@@ -55,7 +55,7 @@ function Location(data){
 }
 
 //weather
-//refactored to push weather constructor into weather array
+//refactored to push weather constructor into weather array after code review
 function searchWeather(query) {
 // if(Location.latitude === 'latitude' && Location.longitude === 'longitude'){
   const darkSky = require('./data/darksky.json');
