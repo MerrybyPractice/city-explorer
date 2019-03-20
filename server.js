@@ -10,14 +10,13 @@ const app = express();
 const cors = require('cors');
 app.use(cors());
 
+const superagent = require('superagent');
+
 const PORT = process.env.PORT;
 //const MAPS_API = process.env.MAPS_API;
 
 //pathing
-app.get('/location', (request, response) => {
-  const locationData = searchToLatLong(request.query.data);
-  response.send(locationData);
-});
+app.get('/location', searchToLatLong)
 
 app.get('/weather', (request, response) => {
   const weatherData = searchWeather(request.query.data);
@@ -35,41 +34,52 @@ app.get('/testing', (request, response) => {
 
 app.listen(PORT, () => console.log(`Listening on PORT ${PORT}`));
 
+function handleError(err, res){
+  console.error(err);
+  if (res) res.status(500).send('Sorry, we seem to have a bit of a problem.')
+}
+
 //helper functions
 
 //location
 
-function searchToLatLong(query){
+function searchToLatLong(request, response){
+  const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${request.query.data}&key=${process.env.GEOCODE_API}`;
 
-  const geoData = require('./geo.json');
-  const location = new Location(geoData);
-  location.search_query = query;
-  console.log(location);
-  return location;
+  return superagent.get(url)
+    .then(result => {
+      response.send(new Location(request.query.data, result))
+    })
+    .catch(error => handleError(error));
 }
 
-function Location(data){
-  this.formatted_query = data.results[0].formatted_address;
-  this.latitude = data.results[0].geometry.location.lat;
-  this.longitude = data.results[0].geometry.location.lng;
+function Location(query, location){
+  this.search_query = query;
+  this.formatted_query = location.body.results[0].formatted_address;
+  this.latitude = location.body.results[0].geometry.location.lat;
+  this.longitude = location.body.results[0].geometry.location.lng;
 }
+
 
 //weather
 
 function searchWeather(query){
-  if(Location.latitude === 'latitude' && Location.longitude === 'longitude'){
-    const darkSky = require('./darksky.json');
-    const weather = new Weather(darkSky);
-    weather.search_query = query;
-    console.log(weather);
-    return weather;
-  }
+
+  const darkSky = require('./data/darksky.json');
+  let weatherArray = []
+
+  darkSky.daily.data.forEach(day =>{
+    weatherArray.push(new Weather(day));
+  });
+
+  // weather.search_query = query;
+  console.log(weatherArray);
+  return weatherArray;
 }
 
 
-function Weather(data){
-  this.forecast = data.results[0].daily.data.summary;
-  this.time = data.results[0].daily.data.time.toString();
-
+function Weather(day){
+  this.forecast = day.summary;
+  this.time = new Date(day.time * 1000).toString().slice(0, 15);
 }
 
