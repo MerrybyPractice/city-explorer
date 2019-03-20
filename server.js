@@ -10,13 +10,14 @@ const app = express();
 const cors = require('cors');
 app.use(cors());
 
-const superagent = require('superagent');
-
 const PORT = process.env.PORT;
 //const MAPS_API = process.env.MAPS_API;
 
 //pathing
-app.get('/location', searchToLatLong)
+app.get('/location', (request, response) => {
+  const locationData = searchToLatLong(request.query.data);
+  response.send(locationData);
+});
 
 app.get('/weather', (request, response) => {
   const weatherData = searchWeather(request.query.data);
@@ -36,28 +37,27 @@ app.listen(PORT, () => console.log(`Listening on PORT ${PORT}`));
 
 function handleError(err, res){
   console.error(err);
-  if (res) res.status(500).send('Sorry, we seem to have a bit of a problem.')
+  if (res) res.status(500).send('Sorry, we seem to have a bit of a problem')
 }
 
 //helper functions
 
 //location
 
-function searchToLatLong(request, response){
-  const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${request.query.data}&key=${process.env.GEOCODE_API}`;
+function searchToLatLong(query){
 
-  return superagent.get(url)
-    .then(result => {
-      response.send(new Location(request.query.data, result))
-    })
-    .catch(error => handleError(error));
+  const geoData = require('./data/geo.json');
+  const location = new Location(geoData);
+  location.search_query = query;
+  console.log(location);
+  return location;
 }
 
-function Location(query, location){
-  this.search_query = query;
-  this.formatted_query = location.body.results[0].formatted_address;
-  this.latitude = location.body.results[0].geometry.location.lat;
-  this.longitude = location.body.results[0].geometry.location.lng;
+function Location(data){
+  console.log(data);
+  this.formatted_query = data.results[0].formatted_address;
+  this.latitude = data.results[0].geometry.location.lat;
+  this.longitude = data.results[0].geometry.location.lng;
 }
 
 
